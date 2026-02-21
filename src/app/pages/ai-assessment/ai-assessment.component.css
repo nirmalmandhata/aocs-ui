@@ -1,0 +1,37 @@
+/* AI Assessment Component Styles */
+
+:host {
+  display: block;
+}
+
+/* Smooth transitions for form fields */
+input, select, textarea {
+  transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Placeholder styling */
+::placeholder {
+  color: #9ca3af;
+}
+
+/* Scrollbar styling for custom appearance */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
