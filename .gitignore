@@ -1,3 +1,9 @@
 # Create the file (Linux/macOS)
 touch .gitignore
 # or create it manually via your file explorer/editor
+node_modules/
+dist/
+build/
+/node_modules
+.angular/
+/.angular
