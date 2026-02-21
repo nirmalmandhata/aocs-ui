@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="80" viewBox="0 0 600 200">
+  <rect width="600" height="200" fill="#0f1724" rx="8" />
+  <text x="36" y="120" font-family="Segoe UI, Roboto, Arial" font-size="72" fill="#ffffff">AOCS.AI</text>
+  <text x="36" y="160" font-family="Segoe UI, Roboto, Arial" font-size="18" fill="#9ca3af">Art of Coding Solutions AI</text>
+</svg>

@@ -1,0 +1,25 @@
+.app-container {
+    min-height: 100vh;
+    background: var(--tms-bg-primary);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.tms-main {
+    min-height: 100vh;
+    background: var(--tms-bg-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.tms-content {
+    padding: 1.5rem;
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .tms-content {
+        padding: 1rem;
+    }
+}

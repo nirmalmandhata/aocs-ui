@@ -1,0 +1,681 @@
+/* TMS Global Styles - Art of Coding Solutions AI Theme */
+
+/* ============================================
+   CSS Custom Properties - TMS Color Palette
+   ============================================ */
+/* Default Theme (Dark) Variables */
+:root,
+.dark-theme {
+    /* Primary / Background */
+    --tms-bg-primary: #0F172A;
+    --tms-bg-secondary: #020617;
+    /* Even darker for contrast */
+    --tms-bg-card: #1E293B;
+    --tms-bg-elevated: #334155;
+
+    /* Accent / CTA / Route Highlight */
+    --tms-accent: #F97316;
+    /* Strong Orange */
+    --tms-accent-hover: #FB923C;
+    --tms-accent-light: #FDBA74;
+
+    /* Text Colors */
+    --tms-text-primary: #F8FAFC;
+    --tms-text-secondary: #CBD5E1;
+    --tms-text-muted: #94A3B8;
+
+    /* Status Colors */
+    --tms-success: #22C55E;
+    --tms-warning: #EAB308;
+    --tms-error: #EF4444;
+    --tms-info: #38BDF8;
+
+    /* Border Colors */
+    --tms-border: #334155;
+    --tms-border-light: #475569;
+
+    /* Shadows */
+    --tms-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --tms-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --tms-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    --tms-shadow-glow: 0 0 20px rgba(249, 115, 22, 0.15);
+
+    /* Spacing */
+    --tms-sidebar-width: 260px;
+    --tms-sidebar-collapsed: 72px;
+    --tms-header-height: 64px;
+    --tms-bottom-nav-height: 64px;
+
+    /* Border Radius */
+    --tms-radius-sm: 6px;
+    --tms-radius: 12px;
+    --tms-radius-lg: 16px;
+    --tms-radius-xl: 24px;
+
+    /* Transitions */
+    --tms-transition-fast: 150ms ease;
+    --tms-transition: 200ms ease;
+    --tms-transition-slow: 300ms ease;
+}
+
+/* Light Theme Overrides */
+.light-theme {
+    /* Primary / Background */
+    --tms-bg-primary: #F1F5F9;
+    --tms-bg-secondary: #FFFFFF;
+    --tms-bg-card: #FFFFFF;
+    --tms-bg-elevated: #E2E8F0;
+
+    /* Accent / CTA / Route Highlight */
+    --tms-accent: #EA580C;
+    /* Slightly darker orange for light bg contrast */
+    --tms-accent-hover: #C2410C;
+    --tms-accent-light: #FB923C;
+
+    /* Text Colors */
+    --tms-text-primary: #0F172A;
+    --tms-text-secondary: #475569;
+    --tms-text-muted: #64748B;
+
+    /* Status Colors */
+    --tms-success: #16A34A;
+    --tms-warning: #CA8A04;
+    --tms-error: #DC2626;
+    --tms-info: #0284C7;
+
+    /* Border Colors */
+    --tms-border: #E2E8F0;
+    --tms-border-light: #CBD5E1;
+
+    /* Shadows */
+    --tms-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --tms-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --tms-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    --tms-shadow-glow: 0 0 15px rgba(249, 115, 22, 0.2);
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--tms-text-primary);
+    background-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure the root doesn't paint an opaque background that would hide the photo */
+html {
+    background: transparent;
+}
+
+/* Hero full-bleed image panel: the hero section now owns the image and overlay */
+#hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: center;
+    padding: 3.5rem 1.5rem;
+    border-radius: calc(var(--tms-radius) + 4px);
+    background-color: transparent;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Content block that sits below the hero image */
+.hero-content {
+    padding: 3.25rem 0;
+    background: transparent;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Make hero content flush-left (override container centering) */
+.hero-content.container {
+    max-width: none;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 1.5rem;
+}
+
+.hero-content h1 {
+    margin-top: 0.25rem;
+    font-size: 36px;
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 24px;
+    }
+}
+
+#hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: url('/assets/aocsai.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    transform: translateZ(0);
+}
+
+#hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(2,6,23,0.65), rgba(2,6,23,0.35));
+    pointer-events: none;
+}
+
+/* Ensure hero child content appears above image and overlay */
+#hero > * {
+    position: relative;
+    z-index: 2;
+}
+/* Typography scales */
+h1 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+h3 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+h4 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+h5 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+h6 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+a {
+    color: var(--tms-accent);
+    text-decoration: none;
+    transition: color var(--tms-transition-fast);
+}
+
+a:hover {
+    color: var(--tms-accent-hover);
+}
+
+/* ============================================
+   Layout Utilities
+   ============================================ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grid {
+    display: grid;
+}
+
+.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.gap-1 {
+    gap: 0.5rem;
+}
+
+.gap-2 {
+    gap: 1rem;
+}
+
+.gap-3 {
+    gap: 1.5rem;
+}
+
+.gap-4 {
+    gap: 2rem;
+}
+
+/* ============================================
+   Cards and Components
+   ============================================ */
+.card {
+    /* translucent glass card so background image shows through slightly */
+    background-color: rgba(15, 23, 42, 0.72);
+    color: var(--tms-text-primary);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: var(--tms-radius);
+    padding: 1.5rem;
+    box-shadow: var(--tms-shadow);
+    transition: all var(--tms-transition);
+    backdrop-filter: blur(6px) saturate(1.1);
+}
+
+.card:hover {
+    box-shadow: var(--tms-shadow-lg);
+}
+
+.card-elevated {
+    background-color: rgba(25, 33, 53, 0.78);
+    border-color: rgba(255,255,255,0.06);
+    box-shadow: var(--tms-shadow-lg);
+}
+
+/* Light theme translucent overrides */
+.light-theme .card {
+    background-color: rgba(255,255,255,0.85);
+    color: var(--tms-text-primary);
+    border: 1px solid rgba(2,6,23,0.06);
+}
+
+.light-theme .card-elevated {
+    background-color: rgba(255,255,255,0.92);
+    border-color: rgba(2,6,23,0.08);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+button,
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--tms-radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--tms-transition-fast);
+    border: none;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: var(--tms-accent);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--tms-accent-hover);
+}
+
+.btn-secondary {
+    background: var(--tms-bg-elevated);
+    color: var(--tms-text-primary);
+    border: 1px solid var(--tms-border);
+}
+
+.btn-secondary:hover {
+    background: var(--tms-border);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--tms-accent);
+    border: 1px solid var(--tms-accent);
+}
+
+.btn-ghost:hover {
+    background: rgba(249, 115, 22, 0.1);
+}
+
+/* CTA button styles - explicit and theme-aware */
+.cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: calc(var(--tms-radius) - 2px);
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all var(--tms-transition-fast);
+}
+
+.cta.primary {
+    background: var(--tms-accent);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(15,23,42,0.18);
+}
+
+.cta.primary:hover {
+    background: var(--tms-accent-hover);
+}
+
+.cta.secondary {
+    /* Match primary styling to ensure visibility across themes */
+    background: var(--tms-accent);
+    color: #ffffff;
+    border: 1px solid transparent;
+    box-shadow: 0 6px 18px rgba(15,23,42,0.18);
+    padding: 0.75rem 1rem;
+}
+
+.cta.secondary:hover {
+    background: var(--tms-accent-hover);
+}
+
+/* Light theme adjustments to ensure contrast */
+.light-theme .cta.primary,
+.light-theme .cta.secondary {
+    background: var(--tms-accent);
+    color: #ffffff;
+}
+
+.cta.secondary:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(249,115,22,0.08);
+}
+
+/* ============================================
+   Forms
+   ============================================ */
+input,
+textarea,
+select {
+    background: var(--tms-bg-card);
+    border: 1px solid var(--tms-border);
+    color: var(--tms-text-primary);
+    padding: 0.75rem;
+    border-radius: var(--tms-radius);
+    font-family: inherit;
+    font-size: inherit;
+    transition: all var(--tms-transition-fast);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--tms-accent);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+input::placeholder {
+    color: var(--tms-text-muted);
+}
+
+/* ============================================
+   Responsive Utilities
+   ============================================ */
+@media (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .container {
+        padding: 0 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    h3 {
+        font-size: 18px;
+    }
+
+    .container {
+        padding: 0 1rem;
+    }
+
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .show-mobile {
+        display: none !important;
+    }
+}
+
+/* Additional styles for new sections: cards, media, hover effects, and flow */
+.hover-card {
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+}
+.hover-card .media {
+    height: 160px;
+    overflow: hidden;
+    border-radius: calc(var(--tms-radius) - 4px);
+    margin-bottom: 12px;
+}
+.hover-card .media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--tms-transition);
+}
+.hover-card:hover .media img {
+    transform: scale(1.04);
+}
+
+/* Service blocks with image aligned right on desktop, stacked on mobile */
+.service-block {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 1.5rem;
+    align-items: center;
+}
+.service-block.reverse {
+    grid-template-columns: 360px 1fr;
+}
+.service-media img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+.service-content h3 { margin-bottom: 8px }
+
+/* Use case layout */
+.usecase {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 1rem;
+    align-items: center;
+}
+.usecase.reverse {
+    grid-template-columns: 1fr 360px;
+}
+.usecase-media img { width:100%; height:auto; border-radius:8px }
+
+/* 5-step flow layout */
+.flow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.flow-step {
+    min-width: 180px;
+    max-width: 220px;
+    text-align: center;
+    padding: 12px;
+}
+.flow-step img { width:56px; height:56px; object-fit:cover; margin:0 auto 8px }
+.flow-arrow { font-size:22px; color:var(--tms-text-secondary); margin:0 4px }
+
+/* Fade-in simple animation (runs on load but is subtle and professional) */
+.fade-in { opacity: 0; transform: translateY(8px); transition: opacity 420ms ease, transform 420ms ease }
+.fade-in-visible { opacity: 1; transform: none }
+
+/* Small helper to reveal fade-in on initial paint after a short delay */
+body:not(.prefers-reduced-motion) .fade-in { animation: fadeInUp 520ms ease forwards; }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px) }
+    to { opacity: 1; transform: translateY(0) }
+}
+
+/* Muted list styling for bullets */
+.muted-list { list-style: disc inside; color: var(--tms-text-secondary); margin-top:8px }
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .service-block, .usecase { grid-template-columns: 1fr; }
+    .service-block.reverse { grid-template-columns: 1fr; }
+    .usecase.reverse { grid-template-columns: 1fr; }
+    .flow { justify-content: center }
+    .flow-arrow { display: none }
+}
+
+/* ============================================
+   Material Typography Override
+   ============================================ */
+.mat-typography {
+    font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ============================================
+   Home page spacing and hero background
+   ============================================ */
+
+/* Consistent vertical rhythm for page sections */
+.section {
+    /* Align sections with hero image - flush-left layout */
+    max-width: none;
+    margin: 0;
+    padding: 2.5rem 1.5rem 2.5rem 0;
+    box-sizing: border-box;
+}
+
+/* Slightly tighter padding for cards that are also sections */
+.card.section {
+    padding: 1.5rem;
+}
+
+/* Add spacing between consecutive sections */
+.section + .section {
+    margin-top: 1.25rem;
+}
+
+/* Section headings spacing */
+.section h2 {
+    margin-bottom: 0.75rem;
+}
+
+.section .lead {
+    margin-top: 0.5rem;
+    color: var(--tms-text-secondary);
+}
+
+/* Hero specific layout and stylized SVG background */
+#hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: center;
+    padding: 3.5rem 1.5rem;
+    border-radius: calc(var(--tms-radius) + 4px);
+    background-color: transparent;
+}
+
+/* Hero content adjustments */
+#hero > div {
+    max-width: 780px;
+}
+
+/* Hero aside card style refinement */
+#hero .hero-aside {
+    background-color: rgba(17,24,39,0.5);
+    border-radius: var(--tms-radius);
+    padding: 1.25rem;
+    border: 1px solid rgba(255,255,255,0.03);
+    backdrop-filter: blur(4px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    #hero {
+        grid-template-columns: 1fr 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    #hero {
+        grid-template-columns: 1fr;
+        background-position: 50% 30%;
+        padding: 2rem 1rem;
+    }
+
+    /* ensure sections remain clearly separated on mobile */
+    .section {
+        padding: 1.5rem 0;
+    }
+}
+

@@ -1,0 +1,3 @@
+# Create the file (Linux/macOS)
+touch .gitignore
+# or create it manually via your file explorer/editor

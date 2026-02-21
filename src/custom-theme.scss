@@ -1,0 +1,44 @@
+// Custom Theming for Angular Material
+// This file is intentionally minimal as we use CSS variables in styles.css
+// For more information: https://material.angular.io/guide/theming
+
+// Core Material functions
+@use '@angular/material' as mat;
+
+// Include mat-core (required for all Material components)
+@include mat.core();
+
+// Define custom color palettes
+$custom-primary: mat.define-palette(mat.$orange-palette);
+$custom-accent: mat.define-palette(mat.$cyan-palette, A200, A100, A400);
+$custom-warn: mat.define-palette(mat.$red-palette);
+
+// Create themes
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: $custom-primary,
+    accent: $custom-accent,
+    warn: $custom-warn,
+  )
+));
+
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $custom-primary,
+    accent: $custom-accent,
+    warn: $custom-warn,
+  )
+));
+
+// Apply dark theme by default
+@include mat.all-component-colors($dark-theme);
+
+// Apply light theme when class is present
+.light-theme {
+  @include mat.all-component-colors($light-theme);
+}
+
+// Apply dark theme when class is present
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+}
