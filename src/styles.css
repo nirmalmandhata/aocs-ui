@@ -128,26 +128,43 @@ html {
 
 /* Hero full-bleed image panel: the hero section now owns the image and overlay */
 #hero {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 2rem;
-    align-items: center;
-    padding: 3.5rem 1.5rem;
-    border-radius: calc(var(--tms-radius) + 4px);
-    background-color: transparent;
-    min-height: 100vh;
-    overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 3.5rem 1.5rem 1.5rem 1.5rem;
+        border-radius: calc(var(--tms-radius) + 4px);
+        background-color: transparent;
+        min-height: 60vh;
+        overflow: hidden;
+}
+@media (min-width: 900px) {
+    #hero {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 2rem;
+        align-items: center;
+        min-height: 100vh;
+        padding: 3.5rem 1.5rem;
+    }
 }
 
 /* Content block that sits below the hero image */
 .hero-content {
-    padding: 3.25rem 0;
-    background: transparent;
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 2rem;
-    align-items: start;
+        padding: 3.25rem 0;
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        align-items: stretch;
+}
+@media (min-width: 900px) {
+    .hero-content {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 2rem;
+        align-items: start;
+    }
 }
 
 /* Make hero content flush-left (override container centering) */
@@ -174,11 +191,26 @@ html {
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-image: url('/assets/aocsai.jpg');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    transform: translateZ(0);
+        background-image: url('/assets/aocsai.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        transform: translateZ(0);
+        min-height: 320px;
+        max-height: 480px;
+        width: 100vw;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) translateZ(0);
+}
+@media (min-width: 900px) {
+    #hero::before {
+        min-height: 100vh;
+        max-height: none;
+        width: 100%;
+        left: 0;
+        transform: none;
+    }
 }
 
 #hero::after {
@@ -279,10 +311,22 @@ a:hover {
 }
 
 .grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
 }
 
+@media (min-width: 600px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 900px) {
+    .grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+/* removed extra curly brace */
 .gap-1 {
     gap: 0.5rem;
 }

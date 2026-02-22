@@ -12,6 +12,12 @@ import { AssessmentSuccessComponent } from '../assessment-success/assessment-suc
   styleUrls: ['./ai-assessment.component.css']
 })
 export class AIAssessmentComponent implements OnInit {
+    timelineOptions = [
+      { label: 'Less than 3 months', value: 'less_3_months' },
+      { label: '3 - 6 months', value: '3_6_months' },
+      { label: '6 - 12 months', value: '6_12_months' },
+      { label: 'More than 12 months', value: 'above_12_months' }
+    ];
   @ViewChild(AssessmentSuccessComponent) successComponent!: AssessmentSuccessComponent;
 
   assessmentForm!: FormGroup;
@@ -38,13 +44,6 @@ export class AIAssessmentComponent implements OnInit {
     { label: '$100K - $250K', value: '100k_250k' },
     { label: '$250K - $500K', value: '250k_500k' },
     { label: 'Above $500K', value: 'above_500k' }
-  ];
-
-  timelineOptions = [
-    { label: 'Less than 3 months', value: 'less_3_months' },
-    { label: '3 - 6 months', value: '3_6_months' },
-    { label: '6 - 12 months', value: '6_12_months' },
-    { label: 'More than 12 months', value: 'above_12_months' }
   ];
 
   techStackOptions = [
@@ -150,17 +149,15 @@ export class AIAssessmentComponent implements OnInit {
     this.firestoreService.saveAssessment(assessmentWithScore).subscribe({
       next: (docRef) => {
         console.log('Assessment saved successfully:', docRef.id);
-        
-        // Trigger email notification (fire and forget)
-        this.firestoreService.triggerEmailNotification(assessmentWithScore, docRef.id).subscribe({
-          next: () => {
-            console.log('Email notification queued');
+        // Send email via Netlify function
+        this.firestoreService.sendEmailViaNetlify(assessmentWithScore).subscribe({
+          next: (emailResult) => {
+            console.log('Email result:', emailResult);
           },
           error: (emailError) => {
-            console.warn('Email notification setup warning:', emailError);
+            console.warn('Email sending error:', emailError);
           }
         });
-
         // Show success regardless of email status
         setTimeout(() => {
           this.isLoading = false;

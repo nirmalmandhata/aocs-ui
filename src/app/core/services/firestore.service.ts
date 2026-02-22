@@ -26,26 +26,33 @@ export class FirestoreService {
   }
 
   /**
-   * Send email notification about assessment submission
-   * This can be implemented via Firestore triggers or Cloud Functions
+   * Send email notification using Netlify function (Brevo)
    */
-  triggerEmailNotification(assessment: AIAssessment, docId: string): Observable<any> {
-    // Create a document in a collection that Cloud Function monitors
-    return from(addDoc(collection(db, 'email_queue'), {
-      recipientEmail: 'support@aocsai.com',
-      submitterEmail: assessment.email,
-      submitterName: assessment.companyName,
-      assessmentId: docId,
-      assessmentData: {
-        companyName: assessment.companyName,
-        industry: assessment.industry,
-        teamSize: assessment.teamSize,
-        budget: assessment.budget,
-        timeline: assessment.timeline,
-        score: assessment.aiReadinessScore
-      },
-      createdAt: new Date().toISOString(),
-      status: 'pending'
-    }));
+  sendEmailViaNetlify(assessment: AIAssessment): Observable<any> {
+    const subject = 'Your AI Readiness Assessment Submission';
+    const htmlContent = `
+      <h2>Thank you for your submission!</h2>
+      <p>Dear ${assessment.companyName},</p>
+      <p>We have received your AI Readiness Assessment. Our team will review your submission and get back to you soon.</p>
+      <hr>
+      <p><strong>Industry:</strong> ${assessment.industry}</p>
+      <p><strong>Team Size:</strong> ${assessment.teamSize}</p>
+      <p><strong>Score:</strong> ${assessment.aiReadinessScore}/100</p>
+      <p><strong>Budget Range:</strong> ${assessment.budget}</p>
+      <p><strong>Timeline:</strong> ${assessment.timeline}</p>
+      <hr>
+      <p>If you have any questions, please contact support@aocsai.com.</p>
+    `;
+    const payload = {
+      to: assessment.email,
+      subject,
+      htmlContent,
+      textContent: `Thank you for your submission! Your AI Readiness Score is ${assessment.aiReadinessScore}/100.`
+    };
+    return from(fetch('/.netlify/functions/sendEmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(res => res.json()));
   }
 }

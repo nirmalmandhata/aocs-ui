@@ -7,3 +7,5 @@ build/
 /node_modules
 .angular/
 /.angular
+# Local Netlify folder
+.netlify
