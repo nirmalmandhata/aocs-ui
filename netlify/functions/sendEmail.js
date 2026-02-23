@@ -37,20 +37,32 @@ exports.handler = async (event) => {
   const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
   const emailsApi = client.transactionalEmails;
 
-  const recipients = [
-    { email: body.to },
-    { email: "support@aocsai.com" }
-  ];
-
-  const sendSmtpEmail = {
-    to: recipients,
-    sender: { email: process.env.BREVO_SENDER_EMAIL },
-    subject: body.subject,
-    htmlContent: body.htmlContent,
-    textContent: body.textContent || undefined,
-  };
-
-  console.log('Prepared sendSmtpEmail:', sendSmtpEmail);
+  // If the request is a 'send message' (has name, email, message), send to support@aocsai.com
+  let sendSmtpEmail;
+  if (body.name && body.email && body.message) {
+    sendSmtpEmail = {
+      to: [{ email: "support@aocsai.com" }],
+      sender: { email: process.env.BREVO_SENDER_EMAIL },
+      subject: `New Message from ${body.name}`,
+      htmlContent: `<p><strong>Name:</strong> ${body.name}</p><p><strong>Email:</strong> ${body.email}</p><p><strong>Message:</strong><br>${body.message.replace(/\n/g, '<br>')}</p>`,
+      textContent: `Name: ${body.name}\nEmail: ${body.email}\nMessage:\n${body.message}`
+    };
+    console.log('Prepared sendSmtpEmail for message:', sendSmtpEmail);
+  } else {
+    // Default: assessment or other email, send to both user and support
+    const recipients = [
+      { email: body.to },
+      { email: "support@aocsai.com" }
+    ];
+    sendSmtpEmail = {
+      to: recipients,
+      sender: { email: process.env.BREVO_SENDER_EMAIL },
+      subject: body.subject,
+      htmlContent: body.htmlContent,
+      textContent: body.textContent || undefined,
+    };
+    console.log('Prepared sendSmtpEmail:', sendSmtpEmail);
+  }
 
   try {
     const result = await emailsApi.sendTransacEmail(sendSmtpEmail);
