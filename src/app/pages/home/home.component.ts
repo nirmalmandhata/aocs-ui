@@ -10,8 +10,8 @@ export class HomeComponent {
 
   // Primary conversion action: navigate to contact page where the assessment form lives
   bookAssessment() {
-    // In future we can open a modal or capture lead directly on this page.
-    this.router.navigate(['/contact']);
+    // Start assessment by navigating to assessment page
+    this.router.navigate(['/ai-assessment']);
   }
 
   // Scroll to anchored section on this page
