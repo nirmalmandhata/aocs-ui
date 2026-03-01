@@ -106,24 +106,25 @@ export class AiFitPreviewComponent implements OnInit {
     this.phase = phase;
     this.resultData = { ...val, score, phase };
     // Save to Firestore if email
-    if (val.email) {
-      const doc: AiFitPreview = {
-        teamSize: val.teamSize,
-        industry: val.industry,
-        challenges: val.challenges,
-        goal: val.goal,
-        email: val.email,
-        score,
-        phase,
-        createdAt: new Date().toISOString()
-      };
-      this.firestoreService.saveAiFitPreview(doc).subscribe({
-        next: () => this.loading = false,
-        error: () => this.loading = false
-      });
-    } else {
-      this.loading = false;
-    }
+    const doc: AiFitPreview = {
+      teamSize: val.teamSize,
+      industry: val.industry,
+      challenges: val.challenges,
+      goal: val.goal,
+      email: val.email,
+      score,
+      phase,
+      createdAt: new Date().toISOString()
+    };
+    this.firestoreService.saveAiFitPreview(doc).subscribe({
+      next: () => {
+        this.firestoreService.sendAiFitPreviewEmail(doc).subscribe({
+          next: () => this.loading = false,
+          error: () => this.loading = false
+        });
+      },
+      error: () => this.loading = false
+    });
   }
 
   getRecommendations(score: number): string[] {

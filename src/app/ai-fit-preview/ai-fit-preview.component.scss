@@ -98,11 +98,17 @@ input:focus, select:focus {
   margin: 0 0 18px 0;
 }
 .recommendations li {
-  background: #f3f4f6;
+  background: var(--tms-bg-elevated);
+  color: var(--tms-text-primary);
   border-radius: 6px;
   padding: 10px 14px;
   margin-bottom: 8px;
   font-size: 1rem;
+}
+
+.dark-theme .recommendations li {
+  background: var(--tms-bg-elevated);
+  color: var(--tms-text-primary);
 }
 .cta-buttons {
   display: flex;
