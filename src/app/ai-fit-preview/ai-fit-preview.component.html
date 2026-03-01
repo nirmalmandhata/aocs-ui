@@ -1,0 +1,83 @@
+<div class="ai-fit-preview-card">
+  <div class="gradient-header">
+    <h2 *ngIf="!score">AI Fit Preview</h2>
+    <h2 *ngIf="score">Your AI Fit Score</h2>
+    <div *ngIf="loading" class="spinner-overlay">
+      <app-loading-spinner [isLoading]="true" message="Calculating..." />
+    </div>
+  </div>
+  <div *ngIf="!score && !loading">
+    <div class="progress-bar">
+      <div class="progress" [style.width]="(step/3*100)+'%'"></div>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div *ngIf="step === 1">
+        <h3>Step 1: Team Overview</h3>
+        <div class="form-group">
+          <label>Team Size</label>
+          <select formControlName="teamSize" required>
+            <option value="" disabled>Select team size</option>
+            <option *ngFor="let size of teamSizes" [value]="size">{{ size }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Industry</label>
+          <input type="text" formControlName="industry" placeholder="e.g. Healthcare, Finance" required />
+        </div>
+        <div class="form-actions">
+          <button type="button" (click)="nextStep()" [disabled]="!form.get('teamSize')?.valid || !form.get('industry')?.valid">Next</button>
+        </div>
+      </div>
+      <div *ngIf="step === 2">
+        <h3>Step 2: Business Challenges</h3>
+        <div class="form-group multi">
+          <label>Select all that apply</label>
+          <div class="checkbox-list">
+            <label *ngFor="let challenge of challengesList">
+              <input type="checkbox" [checked]="challengesFormArray.value.includes(challenge)" (change)="toggleChallenge(challenge)" />
+              {{ challenge }}
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" (click)="prevStep()">Back</button>
+          <button type="button" (click)="nextStep()" [disabled]="!challengesFormArray.valid">Next</button>
+        </div>
+      </div>
+      <div *ngIf="step === 3">
+        <h3>Step 3: Growth Goal</h3>
+        <div class="form-group">
+          <label>Growth Goal</label>
+          <div class="radio-list">
+            <label *ngFor="let goal of goals">
+              <input type="radio" formControlName="goal" [value]="goal" />
+              {{ goal }}
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email (optional)</label>
+          <input type="email" formControlName="email" placeholder="your@email.com" />
+        </div>
+        <div class="form-actions">
+          <button type="button" (click)="prevStep()">Back</button>
+          <button type="submit" [disabled]="form.invalid || loading">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="score && !loading" class="result-screen">
+    <div class="score-display">
+      <div class="score-number">{{ score }}</div>
+      <div class="score-phase">{{ phase }}</div>
+    </div>
+    <ul class="recommendations">
+      <li *ngFor="let rec of recommendations">{{ rec }}</li>
+    </ul>
+    <div class="cta-buttons">
+      <button (click)="goToAssessment()">Get Full AI Readiness Report</button>
+      <button (click)="goToContact()">Book Free AI Strategy Call</button>
+      <button (click)="reset()">Start Over</button>
+    </div>
+  </div>
+</div>

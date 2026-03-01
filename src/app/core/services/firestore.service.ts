@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { db } from '../config/firebase.config';
 import { collection, addDoc, DocumentReference } from 'firebase/firestore';
@@ -10,6 +11,13 @@ import { AIAssessment } from '../models/ai-assessment.model';
 export class FirestoreService {
 
   constructor() { }
+
+  /**
+   * Save AI Fit Preview data to Firestore
+   */
+  saveAiFitPreview(data: any): Observable<DocumentReference> {
+    return from(addDoc(collection(db, 'ai_fit_preview'), data));
+  }
 
   /**
    * Save AI assessment data to Firestore

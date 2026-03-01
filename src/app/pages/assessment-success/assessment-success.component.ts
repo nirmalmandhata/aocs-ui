@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { AIAssessmentService } from '../../core/services/assessment.service';
 
@@ -71,17 +71,17 @@ import { AIAssessmentService } from '../../core/services/assessment.service';
             <!-- Buttons - Compact -->
             <div class="grid grid-cols-2 gap-2">
               <button
-                (click)="goHome()"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 text-xs rounded transition"
-              >
-                Home
-              </button>
-              <button
-                (click)="newAssessment()"
-                class="bg-gray-300 hover:bg-gray-400 text-gray-900 font-semibold py-2 text-xs rounded transition"
-              >
-                New
-              </button>
+                  (click)="goHome()"
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 text-xs rounded transition"
+                >
+                  Home
+                </button>
+                <button
+                  (click)="onNewAssessment()"
+                  class="bg-gray-300 hover:bg-gray-400 text-gray-900 font-semibold py-2 text-xs rounded transition"
+                >
+                  New
+                </button>
             </div>
           </div>
         </div>
@@ -91,6 +91,7 @@ import { AIAssessmentService } from '../../core/services/assessment.service';
   styles: []
 })
 export class AssessmentSuccessComponent {
+    @Output() newAssessmentClicked = new EventEmitter<void>();
   @Input() score = 0;
   @Input() companyName = '';
   @Input() email = '';
@@ -107,7 +108,7 @@ export class AssessmentSuccessComponent {
     this.router.navigate(['/']);
   }
 
-  newAssessment(): void {
-    this.router.navigate(['/ai-assessment']);
+  onNewAssessment(): void {
+    this.newAssessmentClicked.emit();
   }
 }

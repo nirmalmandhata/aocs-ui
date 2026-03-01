@@ -1,3 +1,5 @@
+  // ...existing code...
+// ...existing code...
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -122,9 +124,42 @@ export class AIAssessmentComponent implements OnInit {
     this.assessmentForm.patchValue({ techStack });
   }
 
+  // Track which section headers should be red
+  sectionError: { [key: string]: boolean } = {
+    company: false,
+    tech: false,
+    budget: false,
+    timeline: false
+  };
+
   onSubmit(): void {
-    if (this.assessmentForm.invalid) {
+    // Reset section errors
+    this.sectionError = { company: false, tech: false, budget: false, timeline: false };
+    let missingSections: string[] = [];
+    const form = this.assessmentForm;
+    // Company Info
+    if (form.get('companyName')?.invalid || form.get('industry')?.invalid || form.get('teamSize')?.invalid || form.get('email')?.invalid) {
+      this.sectionError.company = true;
+      missingSections.push('Company Information');
+    }
+    // Tech Stack
+    if (form.get('techStack')?.invalid || form.get('challenges')?.invalid) {
+      this.sectionError.tech = true;
+      missingSections.push('Technical Stack');
+    }
+    // Budget
+    if (form.get('budget')?.invalid) {
+      this.sectionError.budget = true;
+      missingSections.push('Budget Range');
+    }
+    // Timeline
+    if (form.get('timeline')?.invalid) {
+      this.sectionError.timeline = true;
+      missingSections.push('Implementation Timeline');
+    }
+    if (missingSections.length > 0) {
       this.markFormGroupTouched(this.assessmentForm);
+      alert('Please complete the following required section(s):\n' + missingSections.join(', '));
       return;
     }
 
@@ -201,5 +236,24 @@ export class AIAssessmentComponent implements OnInit {
     if (field?.hasError('min')) return 'Value must be greater than 0';
     if (field?.hasError('max')) return 'Value exceeds maximum';
     return '';
+  }
+
+  // Helper to convert USD budget label to INR string for display
+  getINR(label: string): string {
+    switch (label) {
+      case 'Under $50K': return '41L';
+      case '$50K - $100K': return '41L - ₹82L';
+      case '$100K - $250K': return '82L - ₹2Cr';
+      case '$250K - $500K': return '2Cr - ₹4Cr';
+      case 'Above $500K': return '4Cr+';
+      default: return '';
+    }
+  }
+
+  handleNewAssessment(): void {
+    this.assessmentForm.reset();
+    this.showSuccess = false;
+    this.sectionError = { company: false, tech: false, budget: false, timeline: false };
+    window.scrollTo(0, 0);
   }
 }

@@ -1,3 +1,16 @@
+/* Horizontal alignment for form fields */
+.min-w-\[200px\] {
+  min-width: 200px;
+}
+.min-w-\[250px\] {
+  min-width: 250px;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.gap-4 {
+  gap: 1rem;
+}
 /* AI Assessment Component Styles */
 
 :host {

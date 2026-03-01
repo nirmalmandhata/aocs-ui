@@ -40,7 +40,11 @@ const routes: Routes = [
       { path: 'use-cases', component: UseCasesComponent },
       { path: 'about', component: AboutComponent },
       { path: 'contact', component: ContactComponent },
-      { path: 'ai-assessment', component: AIAssessmentComponent }
+      { path: 'ai-assessment', component: AIAssessmentComponent },
+      {
+        path: 'ai-fit-preview',
+        loadChildren: () => import('./ai-fit-preview/ai-fit-preview.module').then(m => m.AiFitPreviewModule)
+      }
     ]
   },
   { path: '**', redirectTo: '' }
