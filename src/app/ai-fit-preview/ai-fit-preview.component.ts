@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../core/services/firestore.service';
 import { AiFitPreview } from '../core/models/ai-fit-preview.model';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-ai-fit-preview',
@@ -43,7 +44,8 @@ export class AiFitPreviewComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private firestoreService: FirestoreService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {}
@@ -118,8 +120,64 @@ export class AiFitPreviewComponent implements OnInit {
     };
     this.firestoreService.saveAiFitPreview(doc).subscribe({
       next: () => {
-        this.firestoreService.sendAiFitPreviewEmail(doc).subscribe({
-          next: () => this.loading = false,
+        // Prepare support email payload
+        const supportSubject = 'New AI Fit Preview Submission';
+        const supportHtml = `
+          <h2>New AI Fit Preview Submission</h2>
+          <p><strong>Team Size:</strong> ${doc.teamSize}</p>
+          <p><strong>Industry:</strong> ${doc.industry}</p>
+          <p><strong>Challenges:</strong> ${doc.challenges?.join(', ')}</p>
+          <p><strong>Goal:</strong> ${doc.goal}</p>
+          <p><strong>Email:</strong> ${doc.email || 'N/A'}</p>
+          <p><strong>Score:</strong> ${doc.score}</p>
+          <p><strong>Phase:</strong> ${doc.phase}</p>
+          <p><strong>Submitted At:</strong> ${doc.createdAt}</p>
+        `;
+        const supportPayload = {
+          to: 'support@aocsai.com',
+          subject: supportSubject,
+          htmlContent: supportHtml,
+          textContent: `Team Size: ${doc.teamSize}\nIndustry: ${doc.industry}\nChallenges: ${(doc.challenges||[]).join(', ')}\nGoal: ${doc.goal}\nEmail: ${doc.email || 'N/A'}\nScore: ${doc.score}\nPhase: ${doc.phase}\nSubmitted At: ${doc.createdAt}`
+        };
+
+        // Prepare user email payload (if provided)
+        let userObs = null;
+        if (doc.email) {
+          const userSubject = 'Your AI Fit Preview Results';
+          const userHtml = `
+            <h2>Your AI Fit Preview Results</h2>
+            <p>Thank you for using our AI Fit Preview tool!</p>
+            <p><strong>Your Score:</strong> ${doc.score}/100</p>
+            <p><strong>Phase:</strong> ${doc.phase}</p>
+            <p>If you would like to discuss your results or explore how AI can help your team, please contact <a href="mailto:support@aocsai.com">support@aocsai.com</a>.</p>
+            <hr>
+            <p><strong>Team Size:</strong> ${doc.teamSize}</p>
+            <p><strong>Industry:</strong> ${doc.industry}</p>
+            <p><strong>Challenges:</strong> ${doc.challenges?.join(', ')}</p>
+            <p><strong>Goal:</strong> ${doc.goal}</p>
+            <p><strong>Submitted At:</strong> ${doc.createdAt}</p>
+          `;
+          const userPayload = {
+            to: doc.email,
+            subject: userSubject,
+            htmlContent: userHtml,
+            textContent: `Your AI Fit Preview Results\nScore: ${doc.score}/100\nPhase: ${doc.phase}\nContact support@aocsai.com for more info.\n---\nTeam Size: ${doc.teamSize}\nIndustry: ${doc.industry}\nChallenges: ${(doc.challenges||[]).join(', ')}\nGoal: ${doc.goal}\nSubmitted At: ${doc.createdAt}`
+          };
+          userObs = this.http.post('/.netlify/functions/sendEmail', userPayload);
+        }
+
+        // Send support email, then user email if present
+        this.http.post('/.netlify/functions/sendEmail', supportPayload).subscribe({
+          next: () => {
+            if (userObs) {
+              userObs.subscribe({
+                next: () => this.loading = false,
+                error: () => this.loading = false
+              });
+            } else {
+              this.loading = false;
+            }
+          },
           error: () => this.loading = false
         });
       },
