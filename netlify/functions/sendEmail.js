@@ -22,7 +22,7 @@ exports.handler = async (event) => {
     console.error('Failed to parse event.body:', event.body);
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid JSON payload' }),
+      body: JSON.stringify({ error: 'Invalid JSON payload', details: err.message }),
     };
   }
 
@@ -37,7 +37,6 @@ exports.handler = async (event) => {
   const client = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
   const emailsApi = client.transactionalEmails;
 
-  // If the request is a 'send message' (has name, email, message), send to support@aocsai.com
   let sendSmtpEmail;
   if (body.name && body.email && body.message) {
     sendSmtpEmail = {
@@ -50,18 +49,38 @@ exports.handler = async (event) => {
     console.log('Prepared sendSmtpEmail for message:', sendSmtpEmail);
   } else {
     // Default: assessment or other email, send to both user and support
-    const recipients = [
-      { email: body.to },
-      { email: "support@aocsai.com" }
-    ];
+    let recipients = [];
+    if (body.to) {
+      if (typeof body.to === 'string') {
+        recipients.push({ email: body.to });
+      } else if (Array.isArray(body.to)) {
+        recipients = body.to.map(e => typeof e === 'string' ? { email: e } : e);
+      }
+    }
+    recipients.push({ email: "support@aocsai.com" });
     sendSmtpEmail = {
       to: recipients,
       sender: { email: process.env.BREVO_SENDER_EMAIL },
-      subject: body.subject,
-      htmlContent: body.htmlContent,
+      subject: body.subject || '[NO SUBJECT]',
+      htmlContent: body.htmlContent || '<p>No content</p>',
       textContent: body.textContent || undefined,
     };
     console.log('Prepared sendSmtpEmail:', sendSmtpEmail);
+  }
+
+  // Extra validation and logging
+  if (!sendSmtpEmail.to || !Array.isArray(sendSmtpEmail.to) || sendSmtpEmail.to.length === 0) {
+    console.error('No recipients specified in sendSmtpEmail.to:', sendSmtpEmail);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'No recipients specified' }),
+    };
+  }
+  if (!sendSmtpEmail.subject) {
+    console.error('No subject specified in sendSmtpEmail:', sendSmtpEmail);
+  }
+  if (!sendSmtpEmail.htmlContent) {
+    console.error('No htmlContent specified in sendSmtpEmail:', sendSmtpEmail);
   }
 
   try {
@@ -80,7 +99,8 @@ exports.handler = async (event) => {
       statusCode: 500,
       body: JSON.stringify({
         error: error.message,
-        details: error.response && error.response.body ? error.response.body : undefined
+        details: error.response && error.response.body ? error.response.body : undefined,
+        payload: sendSmtpEmail
       }),
     };
   }
