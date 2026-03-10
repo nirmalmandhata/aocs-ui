@@ -118,77 +118,80 @@ export class AiFitPreviewComponent implements OnInit {
       phase,
       createdAt: new Date().toISOString()
     };
+    // Always send email, even if Firestore save fails
     this.firestoreService.saveAiFitPreview(doc).subscribe({
       next: () => {
         console.log('Firestore save successful, preparing to send email...');
-        // Prepare support email payload
-        const supportSubject = 'New AI Fit Preview Submission';
-        const supportHtml = `
-          <h2>New AI Fit Preview Submission</h2>
-          <p><strong>Team Size:</strong> ${doc.teamSize}</p>
-          <p><strong>Industry:</strong> ${doc.industry}</p>
-          <p><strong>Challenges:</strong> ${doc.challenges?.join(', ')}</p>
-          <p><strong>Goal:</strong> ${doc.goal}</p>
-          <p><strong>Email:</strong> ${doc.email || 'N/A'}</p>
-          <p><strong>Score:</strong> ${doc.score}</p>
-          <p><strong>Phase:</strong> ${doc.phase}</p>
-          <p><strong>Submitted At:</strong> ${doc.createdAt}</p>
-        `;
-        const supportPayload = {
-          to: 'support@aocsai.com',
-          subject: supportSubject,
-          htmlContent: supportHtml,
-          textContent: `Team Size: ${doc.teamSize}\nIndustry: ${doc.industry}\nChallenges: ${(doc.challenges||[]).join(', ')}\nGoal: ${doc.goal}\nEmail: ${doc.email || 'N/A'}\nScore: ${doc.score}\nPhase: ${doc.phase}\nSubmitted At: ${doc.createdAt}`
-        };
-
-        // Send support email
-        this.http.post('/.netlify/functions/sendEmail', supportPayload).subscribe({
-          next: () => {
-            console.log('Support email sent');
-            // Prepare and send user email if provided
-            if (doc.email) {
-              const userSubject = 'Your AI Fit Preview Results';
-              const userHtml = `
-                <h2>Your AI Fit Preview Results</h2>
-                <p>Thank you for using our AI Fit Preview tool!</p>
-                <p><strong>Your Score:</strong> ${doc.score}/100</p>
-                <p><strong>Phase:</strong> ${doc.phase}</p>
-                <p>If you would like to discuss your results or explore how AI can help your team, please contact <a href=\"mailto:support@aocsai.com\">support@aocsai.com</a>.</p>
-                <hr>
-                <p><strong>Team Size:</strong> ${doc.teamSize}</p>
-                <p><strong>Industry:</strong> ${doc.industry}</p>
-                <p><strong>Challenges:</strong> ${doc.challenges?.join(', ')}</p>
-                <p><strong>Goal:</strong> ${doc.goal}</p>
-                <p><strong>Submitted At:</strong> ${doc.createdAt}</p>
-              `;
-              const userPayload = {
-                to: doc.email,
-                subject: userSubject,
-                htmlContent: userHtml,
-                textContent: `Your AI Fit Preview Results\nScore: ${doc.score}/100\nPhase: ${doc.phase}\nContact support@aocsai.com for more info.\n---\nTeam Size: ${doc.teamSize}\nIndustry: ${doc.industry}\nChallenges: ${(doc.challenges||[]).join(', ')}\nGoal: ${doc.goal}\nSubmitted At: ${doc.createdAt}`
-              };
-              this.http.post('/.netlify/functions/sendEmail', userPayload).subscribe({
-                next: () => {
-                  console.log('User email sent');
-                  this.loading = false;
-                },
-                error: (err) => {
-                  console.error('User email error', err);
-                  this.loading = false;
-                }
-              });
-            } else {
-              this.loading = false;
-            }
-          },
-          error: (err) => {
-            console.error('Support email error', err);
-            this.loading = false;
-          }
-        });
+        this.sendAiFitEmails(doc);
       },
       error: (err) => {
         console.error('Firestore save error', err);
+        this.sendAiFitEmails(doc);
+      }
+    });
+  }
+
+  private sendAiFitEmails(doc: AiFitPreview) {
+    // Prepare support email payload
+    const supportSubject = 'New AI Fit Preview Submission';
+    const supportHtml = `
+      <h2>New AI Fit Preview Submission</h2>
+      <p><strong>Team Size:</strong> ${doc.teamSize}</p>
+      <p><strong>Industry:</strong> ${doc.industry}</p>
+      <p><strong>Challenges:</strong> ${doc.challenges?.join(', ')}</p>
+      <p><strong>Goal:</strong> ${doc.goal}</p>
+      <p><strong>Email:</strong> ${doc.email || 'N/A'}</p>
+      <p><strong>Score:</strong> ${doc.score}</p>
+      <p><strong>Phase:</strong> ${doc.phase}</p>
+      <p><strong>Submitted At:</strong> ${doc.createdAt}</p>
+    `;
+    const supportPayload = {
+      to: 'support@aocsai.com',
+      subject: supportSubject,
+      htmlContent: supportHtml,
+      textContent: `Team Size: ${doc.teamSize}\nIndustry: ${doc.industry}\nChallenges: ${(doc.challenges||[]).join(', ')}\nGoal: ${doc.goal}\nEmail: ${doc.email || 'N/A'}\nScore: ${doc.score}\nPhase: ${doc.phase}\nSubmitted At: ${doc.createdAt}`
+    };
+    this.http.post('/.netlify/functions/sendEmail', supportPayload).subscribe({
+      next: () => {
+        console.log('Support email sent');
+        // Prepare and send user email if provided
+        if (doc.email) {
+          const userSubject = 'Your AI Fit Preview Results';
+          const userHtml = `
+            <h2>Your AI Fit Preview Results</h2>
+            <p>Thank you for using our AI Fit Preview tool!</p>
+            <p><strong>Your Score:</strong> ${doc.score}/100</p>
+            <p><strong>Phase:</strong> ${doc.phase}</p>
+            <p>If you would like to discuss your results or explore how AI can help your team, please contact <a href=\"mailto:support@aocsai.com\">support@aocsai.com</a>.</p>
+            <hr>
+            <p><strong>Team Size:</strong> ${doc.teamSize}</p>
+            <p><strong>Industry:</strong> ${doc.industry}</p>
+            <p><strong>Challenges:</strong> ${doc.challenges?.join(', ')}</p>
+            <p><strong>Goal:</strong> ${doc.goal}</p>
+            <p><strong>Submitted At:</strong> ${doc.createdAt}</p>
+          `;
+          const userPayload = {
+            to: doc.email,
+            subject: userSubject,
+            htmlContent: userHtml,
+            textContent: `Your AI Fit Preview Results\nScore: ${doc.score}/100\nPhase: ${doc.phase}\nContact support@aocsai.com for more info.\n---\nTeam Size: ${doc.teamSize}\nIndustry: ${doc.industry}\nChallenges: ${(doc.challenges||[]).join(', ')}\nGoal: ${doc.goal}\nSubmitted At: ${doc.createdAt}`
+          };
+          this.http.post('/.netlify/functions/sendEmail', userPayload).subscribe({
+            next: () => {
+              console.log('User email sent');
+              this.loading = false;
+            },
+            error: (err) => {
+              console.error('User email error', err);
+              this.loading = false;
+            }
+          });
+        } else {
+          this.loading = false;
+        }
+      },
+      error: (err) => {
+        console.error('Support email error', err);
         this.loading = false;
       }
     });
